@@ -17,7 +17,7 @@ export default async function RoadmapPage() {
     redirect('/demo');
   }
 
-  const [goals, habits, missions, recommendations] = await Promise.all([
+  const [goals, , missions, recommendations] = await Promise.all([
     getGoals(userId),
     getHabits(userId),
     getMissions(userId),
@@ -135,7 +135,7 @@ export default async function RoadmapPage() {
                   </div>
                 )) : (
                   <div className="text-sm text-text-muted p-4 border border-border border-dashed rounded-xl">
-                    You haven't accepted any AI recommendations yet. Check your <Link href="/recommendations" className="text-primary underline font-bold">Recommendations feed</Link> to build out your roadmap.
+                    {"You haven't accepted any AI recommendations yet."} Check your <Link href="/recommendations" className="text-primary underline font-bold">Recommendations feed</Link> to build out your roadmap.
                   </div>
                 )}
               </div>

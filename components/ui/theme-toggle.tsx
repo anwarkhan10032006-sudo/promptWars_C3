@@ -9,12 +9,15 @@ export function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    // Simple mock logic for UI purposes
-    const stored = localStorage.getItem('verdance-theme');
-    if (stored === 'light' || stored === 'dark') {
-      setTheme(stored);
-    }
+    const handle = requestAnimationFrame(() => {
+      setMounted(true);
+      // Simple mock logic for UI purposes
+      const stored = localStorage.getItem('verdance-theme');
+      if (stored === 'light' || stored === 'dark') {
+        setTheme(stored);
+      }
+    });
+    return () => cancelAnimationFrame(handle);
   }, []);
 
   const handleThemeChange = (newTheme: 'light' | 'dark' | 'system') => {

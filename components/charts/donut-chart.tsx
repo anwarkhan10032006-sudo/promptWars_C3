@@ -54,7 +54,7 @@ export function DonutChart({ data, title, className }: DonutChartProps) {
                   ))}
                 </Pie>
                 <Tooltip 
-                  formatter={(val: any) => [`${Number(val || 0).toFixed(1)} kg CO2e`, 'Emissions']}
+                  formatter={(val: string | number | undefined) => [`${Number(val || 0).toFixed(1)} kg CO2e`, 'Emissions']}
                   contentStyle={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)', borderRadius: '8px' }}
                 />
                 <Legend iconType="circle" wrapperStyle={{ fontSize: '13px' }} />

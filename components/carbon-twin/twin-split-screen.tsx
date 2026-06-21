@@ -5,7 +5,7 @@ import { Scenario, CarbonTwinProjection } from '../../types';
 import { useAnimatedNumber } from '../../lib/hooks';
 import { cn, formatCurrency } from '../../lib/utils';
 import { TrendingDown, ShieldAlert, Award, DollarSign, ListChecks, ArrowLeftRight } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 interface TwinSplitScreenProps {
   projections: CarbonTwinProjection[];

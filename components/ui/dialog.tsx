@@ -4,7 +4,6 @@ import React, { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { Button } from './button';
 
 export interface DialogProps {
   isOpen: boolean;

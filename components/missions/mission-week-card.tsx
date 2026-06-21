@@ -4,8 +4,7 @@ import React, { useState } from 'react';
 import { MissionWeek, Recommendation } from '../../types';
 import { DifficultyBadge } from './difficulty-badge';
 import { cn } from '../../lib/utils';
-import { CheckSquare2, Square, CalendarRange, Sparkles, CheckCircle2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { CheckSquare2, Square, CalendarRange, CheckCircle2 } from 'lucide-react';
 
 interface MissionWeekCardProps {
   week: MissionWeek;

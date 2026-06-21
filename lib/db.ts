@@ -2,8 +2,12 @@ import { supabase } from './supabase';
 import { getSessionState, updateSessionState, deleteSessionState, mockEmissionFactors, mockCostFactors, mockEquivalenceFactors, mockChallenges } from './mockDb';
 import { 
   UserProfile, ActivityLog, Goal, Habit, WeeklyReport, Persona, 
-  PersonaHistory, CarbonTwinProjection, Mission, MissionWeek, UserChallenge, DemoSlug 
+  CarbonTwinProjection, Mission, MissionWeek, UserChallenge,
+  Recommendation
 } from '../types';
+import { getRankedRecommendations } from './recommendations';
+import { evaluatePersona } from './persona';
+import { generateMissionsForUser } from './missions';
 import { cookies } from 'next/headers';
 
 // Helper to get or generate the session ID from cookies
@@ -15,7 +19,7 @@ export async function getSessionId(): Promise<string> {
       return 'default-session';
     }
     return sessionId;
-  } catch (err) {
+  } catch {
     // Fallback when headers are not available (e.g. static generation or test environment)
     return 'default-session';
   }
@@ -145,16 +149,16 @@ export async function getEquivalenceFactors() {
 }
 
 // Recommendations
-export async function getRecommendations(userId: string): Promise<any[]> {
+export async function getRecommendations(userId: string): Promise<Recommendation[]> {
   if (isMockMode(userId)) {
-    const state = getSessionState(await getSessionId());
-    if ((state as any).recommendations && (state as any).recommendations.length > 0) {
-      return (state as any).recommendations;
+    const sessionId = await getSessionId();
+    const state = getSessionState(sessionId);
+    if (state.recommendations && state.recommendations.length > 0) {
+      return state.recommendations;
     }
     // Generate dynamically if empty
-    const { getRankedRecommendations } = require('./recommendations');
     const ranked = getRankedRecommendations(state.activity_logs, state.goals, state.profile);
-    const recs = ranked.map((r: any) => ({
+    const recs: Recommendation[] = ranked.map((r) => ({
       id: `rec-${Math.random().toString(36).substring(2, 9)}`,
       user_id: userId,
       category: r.category,
@@ -170,8 +174,8 @@ export async function getRecommendations(userId: string): Promise<any[]> {
       expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
     }));
     // Save to state
-    updateSessionState(await getSessionId(), s => {
-      (s as any).recommendations = recs;
+    updateSessionState(sessionId, s => {
+      s.recommendations = recs;
     });
     return recs;
   }
@@ -179,12 +183,13 @@ export async function getRecommendations(userId: string): Promise<any[]> {
   return data || [];
 }
 
-export async function updateRecommendationStatus(userId: string, recId: string, status: 'active' | 'accepted' | 'dismissed' | 'completed'): Promise<any> {
+export async function updateRecommendationStatus(userId: string, recId: string, status: 'active' | 'accepted' | 'dismissed' | 'completed'): Promise<Recommendation> {
   if (isMockMode(userId)) {
-    let updated: any = null;
-    updateSessionState(await getSessionId(), state => {
-      const recs = (state as any).recommendations || [];
-      const idx = recs.findIndex((r: any) => r.id === recId);
+    let updated: Recommendation | null = null;
+    const sessionId = await getSessionId();
+    updateSessionState(sessionId, state => {
+      const recs = state.recommendations || [];
+      const idx = recs.findIndex((r) => r.id === recId);
       if (idx !== -1) {
         recs[idx].status = status;
         updated = recs[idx];
@@ -318,8 +323,17 @@ export async function getWeeklyReports(userId: string): Promise<WeeklyReport[]> 
 // Persona
 export async function getPersona(userId: string): Promise<Persona | null> {
   if (isMockMode(userId)) {
-    const state = getSessionState(await getSessionId());
-    return state.personas.find(p => p.is_current) || null;
+    const sessionId = await getSessionId();
+    const state = getSessionState(sessionId);
+    let persona = state.personas.find(p => p.is_current) || null;
+    if (!persona) {
+      persona = evaluatePersona(state.activity_logs);
+      persona.user_id = userId;
+      updateSessionState(sessionId, s => {
+        s.personas.push(persona!);
+      });
+    }
+    return persona;
   }
   const { data, error } = await supabase!
     .from('personas')
@@ -345,8 +359,31 @@ export async function getCarbonTwinProjections(userId: string): Promise<CarbonTw
 export async function getMissions(userId: string): Promise<Mission[]> {
   let missions: Mission[] = [];
   if (isMockMode(userId)) {
-    const state = getSessionState(await getSessionId());
+    const sessionId = await getSessionId();
+    const state = getSessionState(sessionId);
     missions = state.missions;
+    if (missions.length === 0) {
+      const persona = await getPersona(userId);
+      const recs = await getRecommendations(userId);
+      const generated = generateMissionsForUser(userId, persona?.id || 'sample-p-id', recs);
+      
+      const newMission: Mission = {
+        ...generated.mission,
+        id: `mission-${Math.random().toString(36).substring(2, 9)}`
+      };
+
+      const newWeeks: MissionWeek[] = generated.weeks.map((w, idx) => ({
+        ...w,
+        id: `week-${idx + 1}-${Math.random().toString(36).substring(2, 9)}`,
+        mission_id: newMission.id
+      }));
+
+      updateSessionState(sessionId, s => {
+        s.missions.push(newMission);
+        s.mission_weeks.push(...newWeeks);
+      });
+      missions = [newMission];
+    }
   } else {
     const { data } = await supabase!.from('missions').select('*').eq('user_id', userId);
     missions = data || [];

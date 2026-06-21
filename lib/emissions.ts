@@ -1,5 +1,5 @@
 import { SEED_EMISSION_FACTORS as mockEmissionFactors } from './demo/demo-seeds';
-import { ActivityLog, Category } from '../types';
+import { ActivityLog } from '../types';
 
 // Seasonality factors by month (0-indexed, 0 = January, 11 = December)
 const SEASONALITY_FACTORS: Record<number, number> = {

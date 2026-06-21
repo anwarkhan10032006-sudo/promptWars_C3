@@ -8,6 +8,14 @@ import { Button } from '../../components/ui/button';
 
 export const dynamic = 'force-dynamic';
 
+function getDeterministicParticipantCount(id: string) {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = id.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return Math.floor(Math.abs(hash) % 500 + 100);
+}
+
 export default async function ChallengesPage() {
   const sessionId = await getSessionId();
   const userId = `user-${sessionId}`;
@@ -71,7 +79,7 @@ export default async function ChallengesPage() {
                     
                     <div className="flex items-center space-x-1.5 text-xs font-semibold text-text-muted mb-6">
                       <Users className="h-3.5 w-3.5" />
-                      <span>{Math.floor(Math.random() * 500 + 100)} participants</span>
+                      <span>{getDeterministicParticipantCount(challenge.id)} participants</span>
                     </div>
                   </div>
                   

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { calculateEmissions, partitionLogsInto30DayBlocks, forecastNext30DayFootprint } from '../lib/emissions';
-import { ActivityLog } from '../types';
+import { calculateEmissions, partitionLogsInto30DayBlocks, forecastNext30DayFootprint } from '../../lib/emissions';
+import { ActivityLog } from '../../types';
 
 describe('Emissions Math Engine', () => {
   it('calculates transportation emissions correctly (100km driving @ 0.18)', () => {

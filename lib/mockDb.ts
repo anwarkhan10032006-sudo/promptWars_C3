@@ -3,7 +3,8 @@ import path from 'path';
 import { DEMO_SEEDS, STATIC_CHALLENGES, SEED_EMISSION_FACTORS, SEED_COST_FACTORS, SEED_EQUIVALENCE_FACTORS } from './demo/demo-seeds';
 import { 
   UserProfile, ActivityLog, Goal, Habit, WeeklyReport, Persona, 
-  PersonaHistory, CarbonTwinProjection, Mission, MissionWeek, UserChallenge, DemoSlug
+  PersonaHistory, CarbonTwinProjection, Mission, MissionWeek, UserChallenge, DemoSlug,
+  Recommendation
 } from '../types';
 
 const MOCK_DB_PATH = path.join('C:', 'Users', 'ANWAR KHAN', '.gemini', 'antigravity', 'scratch', 'mockDbState.json');
@@ -22,6 +23,7 @@ export interface SessionState {
   missions: Mission[];
   mission_weeks: MissionWeek[];
   active_demo_slug?: DemoSlug;
+  recommendations?: Recommendation[];
 }
 
 // Global reference tables (read-only in mock db)
@@ -143,21 +145,24 @@ export function findAndCopyProfileByEmail(currentSessionId: string, email: strin
   });
   
   if (matchingSessionId && matchingSessionId !== currentSessionId) {
-    const copiedState = JSON.parse(JSON.stringify(db[matchingSessionId]));
+    const copiedState: SessionState = JSON.parse(JSON.stringify(db[matchingSessionId]));
     const newUserPrefix = `user-${currentSessionId}`;
     
     if (copiedState.profile) {
       copiedState.profile.id = newUserPrefix;
     }
-    copiedState.activity_logs = (copiedState.activity_logs || []).map((x: any) => ({ ...x, user_id: newUserPrefix }));
-    copiedState.goals = (copiedState.goals || []).map((x: any) => ({ ...x, user_id: newUserPrefix }));
-    copiedState.habits = (copiedState.habits || []).map((x: any) => ({ ...x, user_id: newUserPrefix }));
-    copiedState.user_challenges = (copiedState.user_challenges || []).map((x: any) => ({ ...x, user_id: newUserPrefix }));
-    copiedState.weekly_reports = (copiedState.weekly_reports || []).map((x: any) => ({ ...x, user_id: newUserPrefix }));
-    copiedState.personas = (copiedState.personas || []).map((x: any) => ({ ...x, user_id: newUserPrefix }));
-    copiedState.carbon_twin_projections = (copiedState.carbon_twin_projections || []).map((x: any) => ({ ...x, user_id: newUserPrefix }));
-    copiedState.missions = (copiedState.missions || []).map((x: any) => ({ ...x, user_id: newUserPrefix }));
-    copiedState.mission_weeks = (copiedState.mission_weeks || []).map((x: any) => ({ ...x, user_id: newUserPrefix }));
+    copiedState.activity_logs = (copiedState.activity_logs || []).map((x: ActivityLog) => ({ ...x, user_id: newUserPrefix }));
+    copiedState.goals = (copiedState.goals || []).map((x: Goal) => ({ ...x, user_id: newUserPrefix }));
+    copiedState.habits = (copiedState.habits || []).map((x: Habit) => ({ ...x, user_id: newUserPrefix }));
+    copiedState.user_challenges = (copiedState.user_challenges || []).map((x: UserChallenge) => ({ ...x, user_id: newUserPrefix }));
+    copiedState.weekly_reports = (copiedState.weekly_reports || []).map((x: WeeklyReport) => ({ ...x, user_id: newUserPrefix }));
+    copiedState.personas = (copiedState.personas || []).map((x: Persona) => ({ ...x, user_id: newUserPrefix }));
+    copiedState.carbon_twin_projections = (copiedState.carbon_twin_projections || []).map((x: CarbonTwinProjection) => ({ ...x, user_id: newUserPrefix }));
+    copiedState.missions = (copiedState.missions || []).map((x: Mission) => ({ ...x, user_id: newUserPrefix }));
+    copiedState.mission_weeks = (copiedState.mission_weeks || []).map((x: MissionWeek) => ({ ...x }));
+    if (copiedState.recommendations) {
+      copiedState.recommendations = copiedState.recommendations.map((x: Recommendation) => ({ ...x, user_id: newUserPrefix }));
+    }
 
     db[currentSessionId] = copiedState;
     saveState(db);

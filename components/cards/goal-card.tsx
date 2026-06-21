@@ -1,7 +1,7 @@
 import React from 'react';
 import { Goal } from '../../types';
 import { cn } from '../../lib/utils';
-import { Target, Calendar, CheckCircle } from 'lucide-react';
+import { Target, Calendar } from 'lucide-react';
 
 interface GoalCardProps {
   goal: Goal;
@@ -9,7 +9,6 @@ interface GoalCardProps {
 }
 
 export function GoalCard({ goal, className }: GoalCardProps) {
-  const isAchieved = goal.status === 'achieved';
   
   // Calculate completion percentage
   const pct = Math.min(100, Math.max(0, (Number(goal.current_progress) / Number(goal.target_value)) * 100));

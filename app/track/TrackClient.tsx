@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { ActivityLog, Category } from '../../types';
 import { ActivityLogForm } from '../../components/forms/activity-log-form';
 import { quickLogActivity } from '../dashboard/actions';
-import { cn, formatCarbon } from '../../lib/utils';
-import { CalendarRange, History, Bus, Lightbulb, Apple, ShoppingBag, Plane, Trash2 } from 'lucide-react';
+import { cn } from '../../lib/utils';
+import { CalendarRange, History, Bus, Lightbulb, Apple, ShoppingBag, Plane } from 'lucide-react';
 
 interface TrackClientProps {
   initialLogs: ActivityLog[];
@@ -15,7 +15,7 @@ export function TrackClient({ initialLogs }: TrackClientProps) {
   const [logs, setLogs] = useState<ActivityLog[]>(initialLogs);
   const [filter, setFilter] = useState<Category | 'all'>('all');
 
-  const handleLogSubmit = async (values: any) => {
+  const handleLogSubmit = async (values: { category: Category; subcategory: string; quantity: number; occurred_at: string; }) => {
     // 1. Trigger Server Action to insert in DB
     await quickLogActivity(values);
     

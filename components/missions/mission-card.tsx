@@ -1,6 +1,6 @@
 import React from 'react';
 import { Mission, MissionWeek } from '../../types';
-import { CheckCircle2, Circle, Trophy, ArrowRight } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface MissionCardProps {

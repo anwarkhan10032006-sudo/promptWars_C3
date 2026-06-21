@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { signupAction } from '../app/signup/actions';
-import { loginAction } from '../app/login/actions';
-import { getUserProfile } from '../lib/db';
-import { deleteSessionState } from '../lib/mockDb';
+import { signupAction } from '../../app/signup/actions';
+import { loginAction } from '../../app/login/actions';
+import { getUserProfile } from '../../lib/db';
+import { deleteSessionState } from '../../lib/mockDb';
 
 describe('Mock Authentication Actions', () => {
   beforeEach(() => {

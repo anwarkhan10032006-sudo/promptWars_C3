@@ -6,7 +6,6 @@ import { RecommendationCard } from '../../components/cards/recommendation-card';
 import { acceptRecommendationAction, dismissRecommendationAction } from './actions';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Filter, Layers, Zap } from 'lucide-react';
-import { cn } from '../../lib/utils';
 
 interface RecommendationsClientProps {
   initialRecommendations: Recommendation[];
@@ -16,7 +15,7 @@ export function RecommendationsClient({ initialRecommendations }: Recommendation
   const [recommendations, setRecommendations] = useState<Recommendation[]>(initialRecommendations);
   const [filterCategory, setFilterCategory] = useState<Category | 'all'>('all');
   const [filterEffort, setFilterEffort] = useState<'all' | number>('all');
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const handleAccept = (recId: string) => {
     // Optimistic update
@@ -78,7 +77,7 @@ export function RecommendationsClient({ initialRecommendations }: Recommendation
           <span className="text-[10px] uppercase font-bold tracking-wider text-text-muted">Category:</span>
           <select 
             value={filterCategory}
-            onChange={(e) => setFilterCategory(e.target.value as any)}
+            onChange={(e) => setFilterCategory(e.target.value as Category | 'all')}
             className="text-xs bg-surface border border-border rounded-lg px-2 py-1.5 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
           >
             <option value="all">All Categories</option>

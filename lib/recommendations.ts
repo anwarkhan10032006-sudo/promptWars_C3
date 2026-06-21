@@ -1,4 +1,4 @@
-import { Category, ActivityLog, Goal } from '../types';
+import { Category, ActivityLog, Goal, UserProfile } from '../types';
 
 // Scoring Weights
 export const WEIGHTS = {
@@ -16,7 +16,7 @@ export interface CandidateAction {
   effort_score: number; // 1-5
   confidence_score: number; // 0-1
   rationale_template: string;
-  checkMatch: (logs: ActivityLog[], goals: Goal[], profile: any) => boolean;
+  checkMatch: (logs: ActivityLog[], goals: Goal[], profile: UserProfile | null) => boolean;
 }
 
 // Rules Table (18 rules across 5 categories)
@@ -137,7 +137,7 @@ export const RECOMMENDATION_RULES: CandidateAction[] = [
     confidence_score: 0.88,
     rationale_template: 'Subscribing your {quantity} kWh load to local solar replaces carbon-intensive grid fuels, saving 75 kg CO2e/month.',
     checkMatch: (logs, goals, profile) => {
-      return profile && ['US-NW', 'US-NE', 'US-MW', 'US-CA'].includes(profile.electricity_grid_region);
+      return !!(profile && ['US-NW', 'US-NE', 'US-MW', 'US-CA'].includes(profile.electricity_grid_region));
     }
   },
 
@@ -312,7 +312,7 @@ export function scoreRecommendation(
 export function getRankedRecommendations(
   logs: ActivityLog[],
   goals: Goal[],
-  profile: any,
+  profile: UserProfile | null,
   dismissedIds: string[] = []
 ): Array<Omit<CandidateAction, 'checkMatch' | 'rationale_template'> & { score: number; rationale: string }> {
   

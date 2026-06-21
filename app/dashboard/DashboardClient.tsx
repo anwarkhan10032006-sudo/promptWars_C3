@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { 
-  UserProfile, ActivityLog, Goal, Habit, Persona, CarbonTwinProjection, Mission, MissionWeek, Category 
+  UserProfile, ActivityLog, Goal, Habit, Persona, CarbonTwinProjection, Mission, MissionWeek, Category, Recommendation 
 } from '../../types';
 import { Button } from '../../components/ui/button';
 import { Dialog } from '../../components/ui/dialog';
@@ -17,8 +17,8 @@ import { useAnimatedNumber } from '../../lib/hooks';
 import { forecastNext30DayFootprint, partitionLogsInto30DayBlocks } from '../../lib/emissions';
 import { quickLogActivity, completeHabitAction, toggleMissionActionItem } from './actions';
 import { 
-  Plus, CalendarRange, Flame, Award, Navigation as CommuteIcon, 
-  Lightbulb, Apple, ShoppingBag, Plane, Sparkles, TrendingDown, ArrowRight, Leaf
+  Plus, Navigation as CommuteIcon, 
+  Lightbulb, Apple, ShoppingBag, Plane, ArrowRight, Leaf
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '../../lib/utils';
@@ -37,11 +37,9 @@ interface DashboardClientProps {
 export function DashboardClient({
   profile,
   logs,
-  goals,
   habits,
   persona,
   projections,
-  activeMission,
   missionWeeks = []
 }: DashboardClientProps) {
   const [isLogOpen, setIsLogOpen] = useState(false);
@@ -96,7 +94,7 @@ export function DashboardClient({
   
   // Try to find the recommendation items linked to the current week
   // For demo consistency, we can match from seeds or build sample recommendations
-  const activeRecommendations = [
+  const activeRecommendations: Recommendation[] = [
     {
       id: currentWeek?.primary_recommendation_id || 'sample-p-id',
       user_id: profile.id,
@@ -137,7 +135,7 @@ export function DashboardClient({
     setIsLogOpen(true);
   };
 
-  const handleLogSubmit = async (values: any) => {
+  const handleLogSubmit = async (values: { category: Category; subcategory: string; quantity: number; occurred_at: string; }) => {
     await quickLogActivity(values);
     setIsLogOpen(false);
   };
@@ -304,10 +302,10 @@ export function DashboardClient({
           {/* Today's Top Move */}
           {topMove && (
             <div className="space-y-2">
-              <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Today's Top Action</span>
+              <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">{"Today's Top Action"}</span>
               <RecommendationCard 
-                recommendation={topMove as any}
-                onAccept={(id) => alert(`Action accepted! Unlocks a Habit tracker for "${topMove.action_title}".`)}
+                recommendation={topMove}
+                onAccept={() => alert(`Action accepted! Unlocks a Habit tracker for "${topMove.action_title}".`)}
               />
             </div>
           )}

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Recommendation } from '../../types';
 import { cn } from '../../lib/utils';
-import { Info, HelpCircle, Check, X, ChevronDown, ChevronUp, Zap, Sparkles } from 'lucide-react';
+import { HelpCircle, Check, X, ChevronDown, ChevronUp, Zap, Sparkles } from 'lucide-react';
 import { Button } from '../ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -95,6 +95,41 @@ export function RecommendationCard({ recommendation, onAccept, onDismiss, classN
                   </div>
                   <p className="text-text-secondary">{recommendation.rationale_text}</p>
                   
+                  {/* AI Scoring Breakdown */}
+                  <div className="pt-2 border-t border-border mt-2">
+                    <span className="block font-bold text-text-primary mb-1">AI Scoring Breakdown:</span>
+                    <div className="text-[11px] text-text-secondary space-y-1">
+                      <div className="flex justify-between">
+                        <span>Carbon Impact (50%):</span>
+                        <span className="font-bold text-text-primary">
+                          +{(recommendation.predicted_impact_kgco2e_per_month * 0.5).toFixed(1)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Feasibility / Effort (30%):</span>
+                        <span className="font-bold text-text-primary">
+                          +{((6 - recommendation.effort_score) * 0.3).toFixed(1)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Goal Alignment (20%):</span>
+                        <span className="font-bold text-text-primary">
+                          +{((recommendation.rationale_text.toLowerCase().includes('goal') || recommendation.rationale_text.toLowerCase().includes('align')) ? 0.3 : 0.1).toFixed(1)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between border-t border-border/40 pt-1 font-bold text-primary">
+                        <span>Total Decision Score:</span>
+                        <span>
+                          {(
+                            (recommendation.predicted_impact_kgco2e_per_month * 0.5) +
+                            ((6 - recommendation.effort_score) * 0.3) +
+                            ((recommendation.rationale_text.toLowerCase().includes('goal') || recommendation.rationale_text.toLowerCase().includes('align')) ? 0.3 : 0.1)
+                          ).toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Traceable Data points list */}
                   {recommendation.rationale_data_points && Object.keys(recommendation.rationale_data_points).length > 0 && (
                     <div className="pt-2 border-t border-border mt-2">

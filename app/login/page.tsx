@@ -23,8 +23,9 @@ export default function LoginPage() {
       console.log('[AUTH] Logging in with email/password:', email);
       const res = await loginAction(email);
       router.push(res.redirect);
-    } catch (err: any) {
-      setErrorMsg(err.message || 'Failed to log in.');
+    } catch (err) {
+      const error = err as Error;
+      setErrorMsg(error.message || 'Failed to log in.');
     } finally {
       setLoading(false);
     }
@@ -41,8 +42,9 @@ export default function LoginPage() {
       console.log('[AUTH] Logging in via magic link:', email);
       const res = await loginAction(email);
       router.push(res.redirect);
-    } catch (err: any) {
-      setErrorMsg(err.message || 'Failed to log in.');
+    } catch (err) {
+      const error = err as Error;
+      setErrorMsg(error.message || 'Failed to log in.');
     } finally {
       setLoading(false);
     }
@@ -145,7 +147,7 @@ export default function LoginPage() {
 
           {/* Redirect to signup */}
           <div className="pt-4 border-t border-border text-center text-xs text-text-secondary">
-            Don't have an account?{' '}
+            {"Don't have an account?"}{' '}
             <Link href="/signup" className="font-bold text-primary hover:underline">
               Sign Up
             </Link>

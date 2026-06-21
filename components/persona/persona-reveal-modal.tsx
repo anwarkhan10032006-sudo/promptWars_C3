@@ -5,7 +5,7 @@ import { PersonaKey } from '../../types';
 import { PERSONA_METADATA } from '../../lib/persona';
 import { Dialog } from '../ui/dialog';
 import { PersonaCard } from './persona-card';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Sparkles, Trophy } from 'lucide-react';
 import { Button } from '../ui/button';
 
@@ -23,12 +23,14 @@ export function PersonaRevealModal({ isOpen, onClose, personaKey, isEvolution = 
 
   useEffect(() => {
     if (isOpen) {
-      setIsFlipped(false);
       // Auto flip after 1 second for visual suspense
       const timer = setTimeout(() => {
         setIsFlipped(true);
       }, 1000);
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+        setIsFlipped(false);
+      };
     }
   }, [isOpen]);
 

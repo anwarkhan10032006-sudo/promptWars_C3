@@ -4,15 +4,13 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../../components/ui/button';
-import { Leaf, ArrowRight, ArrowLeft, Check, Sparkles, AlertCircle, Info } from 'lucide-react';
+import { Leaf, ArrowRight, ArrowLeft, Check, Sparkles } from 'lucide-react';
 import { calculateEmissions } from '../../lib/emissions';
 import { classifyUserPersona } from '../../lib/persona';
-import { generateMissionsForUser } from '../../lib/missions';
-import { getFallbackRecommendationRationale } from '../../lib/ai-gateway';
 import { calculateEquivalencies } from '../../lib/storytelling';
 import { PersonaRevealModal } from '../../components/persona/persona-reveal-modal';
 import { finishOnboardingAction } from './actions';
-import { PersonaKey, Goal } from '../../types';
+import { PersonaKey } from '../../types';
 import { cn } from '../../lib/utils';
 
 export default function OnboardingPage() {
@@ -479,15 +477,15 @@ export default function OnboardingPage() {
                   Kickoff your First Mission
                 </h2>
                 <p className="text-xs text-text-secondary leading-relaxed max-w-sm mx-auto">
-                  Ready to act? Let's start your first 30-Day Mission, pre-built with 4 weeks of custom actions tailored to your target.
+                  {"Ready to act? Let's start your first 30-Day Mission, pre-built with 4 weeks of custom actions tailored to your target."}
                 </p>
 
                 <div className="space-y-3 pt-6 w-full max-w-xs mx-auto">
-                  <Button onClick={() => handleFinishOnboarding(true)} variant="primary" className="w-full h-11 font-bold text-sm">
-                    Accept Mission & Start
+                  <Button disabled={loading} onClick={() => handleFinishOnboarding(true)} variant="primary" className="w-full h-11 font-bold text-sm">
+                    {loading ? 'Starting...' : 'Accept Mission & Start'}
                   </Button>
-                  <Button onClick={() => handleFinishOnboarding(false)} variant="outline" className="w-full h-11 text-xs text-text-muted">
-                    Skip and go to Dashboard
+                  <Button disabled={loading} onClick={() => handleFinishOnboarding(false)} variant="outline" className="w-full h-11 text-xs text-text-muted">
+                    {loading ? 'Entering...' : 'Skip and go to Dashboard'}
                   </Button>
                 </div>
               </div>

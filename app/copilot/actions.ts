@@ -1,6 +1,6 @@
 'use server';
 
-import { getSessionId, getUserProfile, getActivityLogs, getGoals, getHabits, getPersona, getCarbonTwinProjections, getMissions } from '../../lib/db';
+import { getSessionId, getUserProfile, getActivityLogs, getGoals, getHabits, getPersona, getCarbonTwinProjections, getMissions, getMissionWeeks } from '../../lib/db';
 import { AiGateway } from '../../lib/ai-gateway';
 
 export async function askCopilot(query: string) {
@@ -28,7 +28,7 @@ export async function askCopilot(query: string) {
 
   const activeMission = missions.find(m => m.status === 'active');
   const missionWeeks = activeMission 
-    ? await require('../../lib/db').getMissionWeeks(userId, activeMission.id)
+    ? await getMissionWeeks(userId, activeMission.id)
     : [];
 
   const context = {

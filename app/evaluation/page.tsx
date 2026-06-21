@@ -1,7 +1,6 @@
 import React from 'react';
 import { Navigation } from '../../components/navigation';
 import { CheckCircle2, FileCode, Beaker, LayoutDashboard } from 'lucide-react';
-import Link from 'next/link';
 
 export const dynamic = 'force-static';
 

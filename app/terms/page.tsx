@@ -43,7 +43,7 @@ export default function TermsPage() {
           <section className="space-y-3">
             <h2 className="text-lg font-bold font-display text-text-primary">3. Disclaimer of Warranties</h2>
             <p className="text-xs text-text-secondary leading-relaxed">
-              VERDANCE and its calculations are provided "as-is". We do not offer professional financial, utility, medical, or investment advice. Recommendations (e.g. EV swaps, solar community subscriptions) should be verified by the user against local conditions.
+              VERDANCE and its calculations are provided {"\"as-is\""}. We do not offer professional financial, utility, medical, or investment advice. Recommendations (e.g. EV swaps, solar community subscriptions) should be verified by the user against local conditions.
             </p>
           </section>
         </article>

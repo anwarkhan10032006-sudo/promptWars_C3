@@ -1,7 +1,7 @@
 import React from 'react';
 import { MissionWeek } from '../../types';
 import { cn } from '../../lib/utils';
-import { Check, Compass, Play, Calendar } from 'lucide-react';
+import { Check, Play } from 'lucide-react';
 
 interface MissionTimelineProps {
   weeks: MissionWeek[];

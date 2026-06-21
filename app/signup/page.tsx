@@ -26,8 +26,9 @@ export default function SignupPage() {
       
       // Redirect to onboarding
       router.push('/onboarding');
-    } catch (err: any) {
-      setErrorMsg(err.message || 'Failed to sign up.');
+    } catch (err) {
+      const error = err as Error;
+      setErrorMsg(error.message || 'Failed to sign up.');
     } finally {
       setLoading(false);
     }

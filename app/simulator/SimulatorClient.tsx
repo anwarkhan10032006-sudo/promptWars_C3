@@ -1,18 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { UserProfile } from '../../types';
 import { Slider } from '../../components/ui/slider';
 import { ImpactStoryCard } from '../../components/storytelling/impact-story-card';
 import { motion } from 'framer-motion';
 import { Sliders, Car, Zap, Apple } from 'lucide-react';
-import { cn } from '../../lib/utils';
+import { UserProfile } from '../../types';
 
-interface SimulatorClientProps {
-  profile: UserProfile;
-}
-
-export function SimulatorClient({ profile }: SimulatorClientProps) {
+export function SimulatorClient({ profile }: { profile: UserProfile }) {
   // Scenario values
   const [reduceDriveKm, setReduceDriveKm] = useState(0); // 0 to 500 km/month
   const [reduceElecKwh, setReduceElecKwh] = useState(0); // 0 to 300 kWh/month
@@ -37,7 +32,7 @@ export function SimulatorClient({ profile }: SimulatorClientProps) {
             Impact Simulator
           </h1>
           <p className="text-sm text-text-secondary mt-1">
-            Sandbox mode: move the sliders below to see how small daily changes compound into massive monthly carbon savings.
+            Sandbox mode for {profile.full_name || 'Eco User'}: move the sliders below to see how small daily changes compound into massive monthly carbon savings.
           </p>
         </div>
         <div className="p-3 bg-accent/10 rounded-xl text-accent">

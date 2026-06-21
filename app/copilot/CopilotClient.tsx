@@ -22,15 +22,24 @@ const QUICK_PROMPTS = [
   { text: 'Compare my twin scenarios', query: 'What are the moderate and aggressive scenarios for my Carbon Twin projections?' },
 ];
 
+const WELCOME_MESSAGE: Message = {
+  id: 'welcome',
+  role: 'assistant',
+  content: "Hi! I'm your VERDANCE Sustainability Copilot. I have analyzed your household, transportation, diet, and shopping footprint history. I can help explain your carbon twin projections, breakdown your persona, suggest active missions, or guide your daily savings. What would you like to explore?",
+  timestamp: new Date('2026-06-21T12:00:00.000Z'),
+};
+
+function createMessage(role: 'user' | 'assistant', content: string): Message {
+  return {
+    id: `msg-${Date.now()}-${Math.random().toString(36).substring(2, 9)}-${role}`,
+    role,
+    content,
+    timestamp: new Date()
+  };
+}
+
 export function CopilotClient() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 'welcome',
-      role: 'assistant',
-      content: "Hi! I'm your VERDANCE Sustainability Copilot. I have analyzed your household, transportation, diet, and shopping footprint history. I can help explain your carbon twin projections, breakdown your persona, suggest active missions, or guide your daily savings. What would you like to explore?",
-      timestamp: new Date(),
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([WELCOME_MESSAGE]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -46,12 +55,7 @@ export function CopilotClient() {
   const handleSend = async (text: string) => {
     if (!text.trim() || isLoading) return;
 
-    const userMessage: Message = {
-      id: `msg-${Date.now()}-user`,
-      role: 'user',
-      content: text,
-      timestamp: new Date(),
-    };
+    const userMessage = createMessage('user', text);
 
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
@@ -59,21 +63,11 @@ export function CopilotClient() {
 
     try {
       const responseText = await askCopilot(text);
-      const assistantMessage: Message = {
-        id: `msg-${Date.now()}-assistant`,
-        role: 'assistant',
-        content: responseText,
-        timestamp: new Date(),
-      };
+      const assistantMessage = createMessage('assistant', responseText);
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
       console.error('Error asking copilot:', error);
-      const errorMessage: Message = {
-        id: `msg-${Date.now()}-error`,
-        role: 'assistant',
-        content: 'I encountered an error trying to process that request. Please try again.',
-        timestamp: new Date(),
-      };
+      const errorMessage = createMessage('assistant', 'I encountered an error trying to process that request. Please try again.');
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
@@ -81,14 +75,7 @@ export function CopilotClient() {
   };
 
   const handleClear = () => {
-    setMessages([
-      {
-        id: 'welcome',
-        role: 'assistant',
-        content: "Hi! I'm your VERDANCE Sustainability Copilot. I have analyzed your household, transportation, diet, and shopping footprint history. I can help explain your carbon twin projections, breakdown your persona, suggest active missions, or guide your daily savings. What would you like to explore?",
-        timestamp: new Date(),
-      },
-    ]);
+    setMessages([WELCOME_MESSAGE]);
   };
 
   return (

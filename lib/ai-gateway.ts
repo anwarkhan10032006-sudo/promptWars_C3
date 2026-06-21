@@ -1,4 +1,14 @@
-import { z } from 'zod';
+import { UserProfile, ActivityLog, Goal, Persona, CarbonTwinProjection, Mission, MissionWeek } from '../types';
+
+export interface CopilotDataContext {
+  profile: UserProfile | null;
+  activity_logs: ActivityLog[];
+  goals: Goal[];
+  habits: Array<{ habit_title: string; streak: number; savings: number }>;
+  persona: Persona | null;
+  carbon_twin_projections: CarbonTwinProjection[];
+  active_mission: { mission: Mission; weeks: MissionWeek[] } | null;
+}
 import { calculateEquivalencies } from './storytelling';
 
 // --- System Prompt Versioned Constants ---
@@ -72,11 +82,11 @@ export function getFallbackTwinNarrative(
   }
 }
 
-export function getFallbackCopilotReply(query: string, dataContext: any): string {
+export function getFallbackCopilotReply(query: string, dataContext: CopilotDataContext): string {
   const q = query.toLowerCase();
   
   if (q.includes('emissions') || q.includes('carbon') || q.includes('footprint')) {
-    const total = dataContext.activity_logs?.reduce((sum: number, l: any) => sum + Number(l.computed_emissions_kgco2e), 0) || 0;
+    const total = dataContext.activity_logs?.reduce((sum: number, l: ActivityLog) => sum + Number(l.computed_emissions_kgco2e), 0) || 0;
     return `Looking at your last 90 days, your recorded activity logs sum to a footprint of ${total.toFixed(1)} kg CO2e. Your biggest single contributor category is ${dataContext.persona?.opportunity_areas?.[0] || 'transportation'}. Let me know if you would like suggestions to reduce this.`;
   }
   
@@ -89,7 +99,7 @@ export function getFallbackCopilotReply(query: string, dataContext: any): string
   if (q.includes('mission')) {
     const m = dataContext.active_mission;
     if (!m) return "You don't have an active 30-Day Mission. Head over to the Missions tab to kickoff your first 4-week action plan!";
-    return `You are currently on Week ${m.weeks?.find((w: any) => w.status === 'active')?.week_number || 1} of your 30-Day Mission. Your primary goal is to complete the actions for this week, which will reduce emissions by ${m.weeks?.find((w: any) => w.status === 'active')?.expected_reduction_kgco2e || 0} kg CO2e.`;
+    return `You are currently on Week ${m.weeks?.find((w: MissionWeek) => w.status === 'active')?.week_number || 1} of your 30-Day Mission. Your primary goal is to complete the actions for this week, which will reduce emissions by ${m.weeks?.find((w: MissionWeek) => w.status === 'active')?.expected_reduction_kgco2e || 0} kg CO2e.`;
   }
 
   return `Hi! I'm your VERDANCE Sustainability Copilot. I can analyze your carbon footprint, explain your persona, simulate what-if scenarios, or help you track weekly progress. What would you like to explore?`;
@@ -216,7 +226,7 @@ export class AiGateway {
   }
 
   // Interactive Copilot Chat
-  static async generateCopilotResponse(query: string, dataContext: any): Promise<string> {
+  static async generateCopilotResponse(query: string, dataContext: CopilotDataContext): Promise<string> {
     if (!this.apiKey) {
       return getFallbackCopilotReply(query, dataContext);
     }

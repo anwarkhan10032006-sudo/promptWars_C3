@@ -3,8 +3,7 @@
 import React, { useState } from 'react';
 import { Habit } from '../../types';
 import { cn } from '../../lib/utils';
-import { Check, Flame, Trophy, CalendarCheck } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Check, Flame, CalendarCheck } from 'lucide-react';
 
 interface HabitCardProps {
   habit: Habit;

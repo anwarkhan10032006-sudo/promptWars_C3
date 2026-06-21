@@ -60,11 +60,11 @@ export function LineChart({ data, title, className }: LineChartProps) {
                 />
                 <Tooltip
                   contentStyle={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)', borderRadius: '8px' }}
-                  formatter={(value: any, name: any) => {
+                   formatter={(value: string | number | [number, number] | undefined, name: string | number | undefined) => {
                     if (name === 'actual') return [`${value} kg`, 'Actual Emissions'];
                     if (name === 'forecast') return [`${value} kg`, 'Forecasted Emissions'];
-                    if (name === 'band') return [`[${value[0]}, ${value[1]}] kg`, 'Confidence Interval'];
-                    return [value, name];
+                    if (name === 'band' && Array.isArray(value)) return [`[${value[0]}, ${value[1]}] kg`, 'Confidence Interval'];
+                    return [String(value || ''), String(name || '')];
                   }}
                 />
                 

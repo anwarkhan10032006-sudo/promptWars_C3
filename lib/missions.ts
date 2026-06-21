@@ -71,12 +71,6 @@ export function generateMissionsForUser(
   activeRecommendations: Recommendation[]
 ): { mission: Omit<Mission, 'id'>; weeks: Omit<MissionWeek, 'id' | 'mission_id'>[] } {
   
-  if (activeRecommendations.length < 4) {
-    // Fallback: If we don't have enough active recommendations, use some defaults
-    // Since recommendations rule engine has 18 rules, this is a fallback only
-    const fallbackRecs = activeRecommendations;
-    // ensure we have enough items
-  }
 
   // Group recommendations by effort to distribute over 4 weeks
   const sortedRecs = [...activeRecommendations].sort((a, b) => a.effort_score - b.effort_score);

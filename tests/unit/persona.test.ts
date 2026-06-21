@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { evaluatePersona } from '../lib/persona';
-import { ActivityLog } from '../types';
+import { evaluatePersona } from '../../lib/persona';
+import { ActivityLog } from '../../types';
 
 describe('Persona Classification Engine', () => {
   it('classifies Frequent Flyer if long-haul flights exist', () => {

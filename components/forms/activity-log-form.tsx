@@ -22,7 +22,7 @@ const logFormSchema = z.object({
 type LogFormValues = z.infer<typeof logFormSchema>;
 
 interface ActivityLogFormProps {
-  onSubmitSuccess: (data: any) => void;
+  onSubmitSuccess: (data: LogFormValues) => void;
   defaultCategory?: Category;
   className?: string;
 }
@@ -101,8 +101,9 @@ export function ActivityLogForm({ onSubmitSuccess, defaultCategory = 'transporta
         quantity: activeCategory === 'flights' || activeCategory === 'food' ? 1 : 10,
         occurred_at: new Date().toISOString().substring(0, 16)
       });
-    } catch (err: any) {
-      setErrorMsg(err.message || 'An error occurred while logging activity.');
+    } catch (err) {
+      const error = err as Error;
+      setErrorMsg(error.message || 'An error occurred while logging activity.');
     } finally {
       setSubmitting(false);
     }

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '../components/ui/button';
-import { Leaf, Sparkles, Compass, Shield, ArrowRight, Smartphone, Eye, LayoutDashboard, Zap } from 'lucide-react';
+import { Leaf, Sparkles, Compass, ArrowRight, Smartphone, Eye, LayoutDashboard, Zap } from 'lucide-react';
 import { RecommendationCard } from '../components/cards/recommendation-card';
 import { Recommendation } from '../types';
 import { cn } from '../lib/utils';
