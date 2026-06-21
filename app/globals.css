@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Inter+Tight:wght@600;700;800&display=swap');
+@import "tailwindcss";
+
+:root {
+  /* Light Mode Variables */
+  --color-bg: #f7faf8;
+  --color-surface: #ffffff;
+  --color-surface-elevated: #ffffff;
+  --color-primary: #0f6e4f;
+  --color-primary-foreground: #ffffff;
+  --color-accent: #e2a33b;
+  --color-accent-foreground: #1e1b15;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-text-primary: #121c17;
+  --color-text-secondary: #42524a;
+  --color-text-muted: #748c80;
+  --color-border: #e2e8f0;
+  --color-ring: #0f6e4f;
+
+  /* Category colors - safe contrast */
+  --category-transportation: #2563eb; /* Blue */
+  --category-electricity: #e2a33b;    /* Warm Amber */
+  --category-food: #10b981;           /* Emerald */
+  --category-shopping: #7c3aed;       /* Violet */
+  --category-flights: #0891b2;        /* Cyan */
+
+  /* Scenario Colors */
+  --scenario-current: #64748b;        /* Gray-blue */
+  --scenario-moderate: #84cc16;       /* Lime/Green */
+  --scenario-aggressive: #0f6e4f;     /* Deep Emerald */
+}
+
+/* Dark mode toggle class or system preference */
+.dark, :root[class~="dark"] {
+  --color-bg: #090e0c;
+  --color-surface: #101714;
+  --color-surface-elevated: #16201b;
+  --color-primary: #12b07e;
+  --color-primary-foreground: #090e0c;
+  --color-accent: #f2b857;
+  --color-accent-foreground: #1c150b;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-text-primary: #ecfdf5;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #475569;
+  --color-border: #1e293b;
+  --color-ring: #12b07e;
+
+  /* Category Colors (Dark Mode adjusts) */
+  --category-transportation: #3b82f6;
+  --category-electricity: #f59e0b;
+  --category-food: #34d399;
+  --category-shopping: #a78bfa;
+  --category-flights: #22d3ee;
+}
+
+@theme {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Inter Tight', sans-serif;
+
+  --color-bg: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-surface-elevated: var(--color-surface-elevated);
+  --color-primary: var(--color-primary);
+  --color-primary-foreground: var(--color-primary-foreground);
+  --color-accent: var(--color-accent);
+  --color-accent-foreground: var(--color-accent-foreground);
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-danger: var(--color-danger);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+  --color-border: var(--color-border);
+  --color-ring: var(--color-ring);
+
+  --color-category-transportation: var(--category-transportation);
+  --color-category-electricity: var(--category-electricity);
+  --color-category-food: var(--category-food);
+  --color-category-shopping: var(--category-shopping);
+  --color-category-flights: var(--category-flights);
+
+  --color-scenario-current: var(--scenario-current);
+  --color-scenario-moderate: var(--scenario-moderate);
+  --color-scenario-aggressive: var(--scenario-aggressive);
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
+
+/* Tabular numbers for footprint totals */
+.font-tabular {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-family: var(--font-display);
+}
