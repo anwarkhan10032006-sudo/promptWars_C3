@@ -6,6 +6,7 @@ import { ImpactStoryCard } from '../../components/storytelling/impact-story-card
 import { motion } from 'framer-motion';
 import { Sliders, Car, Zap, Apple } from 'lucide-react';
 import { UserProfile } from '../../types';
+import { SIMULATOR_CONFIG } from '../../lib/config/constants';
 
 export function SimulatorClient({ profile }: { profile: UserProfile }) {
   // Scenario values
@@ -13,14 +14,10 @@ export function SimulatorClient({ profile }: { profile: UserProfile }) {
   const [reduceElecKwh, setReduceElecKwh] = useState(0); // 0 to 300 kWh/month
   const [vegDays, setVegDays] = useState(0); // 0 to 30 days/month
 
-  // Multipliers based on standard factors
-  const DRIVING_EMISSION_FACTOR = 0.18; // kg CO2e per km saved
-  const ELEC_EMISSION_FACTOR = 0.35;    // kg CO2e per kWh saved
-  const VEG_DAY_SAVINGS = 4.5;          // kg CO2e saved per day swapping meat to veg
-
-  const driveSavings = reduceDriveKm * DRIVING_EMISSION_FACTOR;
-  const elecSavings = reduceElecKwh * ELEC_EMISSION_FACTOR;
-  const foodSavings = vegDays * VEG_DAY_SAVINGS;
+  // Multipliers based on standard factors (imported from config constants)
+  const driveSavings = reduceDriveKm * SIMULATOR_CONFIG.DRIVING_EMISSION_FACTOR;
+  const elecSavings = reduceElecKwh * SIMULATOR_CONFIG.ELEC_EMISSION_FACTOR;
+  const foodSavings = vegDays * SIMULATOR_CONFIG.VEG_DAY_SAVINGS;
 
   const totalSavings = driveSavings + elecSavings + foodSavings;
 

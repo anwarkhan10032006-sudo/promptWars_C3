@@ -1,6 +1,18 @@
 import { Mission, MissionWeek, Recommendation } from '../types';
 
-// Adaptive difficulty adjustment logic (deterministic state machine)
+/**
+ * Deterministic state machine adjusting next week's difficulty based on current week performance.
+ * 
+ * Logic rules:
+ * - Completion rate >= 80%: Increases difficulty (swaps to a higher effort_score candidate).
+ * - Completion rate < 40%: Decreases difficulty (swaps to a lower effort_score + higher confidence candidate).
+ * - Otherwise: No change.
+ * 
+ * @param currentWeek - The active week status being evaluated.
+ * @param nextWeek - The upcoming week config that might be adjusted.
+ * @param pool - The user's active recommendations pool to pull new actions from.
+ * @returns Object indicating the adjusted week, difficulty change direction, and modified action title.
+ */
 export function adjustNextWeekDifficulty(
   currentWeek: MissionWeek,
   nextWeek: MissionWeek,
@@ -11,10 +23,7 @@ export function adjustNextWeekDifficulty(
   changedActionTitle?: string;
 } {
   // Calculate completion rate of current week
-  // 100% completed = 2/2, 50% = 1/2, 0% = 0/2
-  // We assume status of the week is evaluated. If completed, it means both are done.
-  // Let's pass the completion count of the current week:
-  const completionRate = currentWeek.status === 'completed' ? 1.0 : 0.0; // Simplification or pass explicit count
+  const completionRate = currentWeek.status === 'completed' ? 1.0 : 0.0;
 
   let difficultyChanged: 'increased' | 'decreased' | 'unchanged' = 'unchanged';
   let changedActionTitle: string | undefined;
@@ -64,14 +73,21 @@ export function adjustNextWeekDifficulty(
   };
 }
 
-// Generate a new 4-week mission from active recommendations
+/**
+ * Generates a new 4-week structured mission template based on active recommendations.
+ * Groups and schedules actions across 4 weeks from lowest effort to highest effort.
+ * 
+ * @param userId - The ID of the user.
+ * @param personaId - The persona classification code.
+ * @param activeRecommendations - Active recommendations to build weeks from.
+ * @returns Object containing the root Mission and 4 associated weeks.
+ */
 export function generateMissionsForUser(
   userId: string,
   personaId: string,
   activeRecommendations: Recommendation[]
 ): { mission: Omit<Mission, 'id'>; weeks: Omit<MissionWeek, 'id' | 'mission_id'>[] } {
   
-
   // Group recommendations by effort to distribute over 4 weeks
   const sortedRecs = [...activeRecommendations].sort((a, b) => a.effort_score - b.effort_score);
 

@@ -1,13 +1,5 @@
 import { Scenario, CarbonTwinProjection, Habit, Goal } from '../types';
-
-export const MODERATE_ADOPTION_RATE = 0.50;
-
-// Configurable sustainability score weights
-export const SUSTAINABILITY_SCORE_WEIGHTS = {
-  reduction: 0.50,
-  breadth: 0.30,
-  consistency: 0.20
-};
+import { CARBON_TWIN_CONFIG } from './config/constants';
 
 export interface TwinCalculationInput {
   userId: string;
@@ -23,7 +15,20 @@ export interface TwinCalculationInput {
   goals: Goal[];
 }
 
-// Pure function to calculate twin projections
+/**
+ * Pure function to calculate carbon twin projections for 3 scenarios over 3, 6, and 12 months.
+ * 
+ * Mathematical model used:
+ * - Current Trajectory: baseline emissions are carried forward.
+ * - Moderate: 50% adoption of active recommendations with effort_score <= 3.
+ * - Aggressive: 100% adoption of all active recommendations.
+ * 
+ * Sustainability Score (0-100) is calculated as:
+ *   Score = (emissions_reduction_pct * 0.5) + (category_breadth_fraction * 0.3) + (habit_consistency_fraction * 0.2)
+ * 
+ * @param input - The TwinCalculationInput containing userId, baselineEmissions, recommendations, habits, and goals.
+ * @returns An array of CarbonTwinProjection objects for each scenario.
+ */
 export function computeTwinScenarioProjections(input: TwinCalculationInput): CarbonTwinProjection[] {
   const { userId, baselineEmissions, activeRecommendations, habits, goals } = input;
   
@@ -32,7 +37,7 @@ export function computeTwinScenarioProjections(input: TwinCalculationInput): Car
 
   // Calculate impacts
   const moderateRecs = activeRecommendations.filter(r => r.effort_score <= 3);
-  const moderateMonthlySavings = moderateRecs.reduce((sum, r) => sum + r.predicted_impact_kgco2e_per_month, 0) * MODERATE_ADOPTION_RATE;
+  const moderateMonthlySavings = moderateRecs.reduce((sum, r) => sum + r.predicted_impact_kgco2e_per_month, 0) * CARBON_TWIN_CONFIG.MODERATE_ADOPTION_RATE;
   
   const aggressiveMonthlySavings = activeRecommendations.reduce((sum, r) => sum + r.predicted_impact_kgco2e_per_month, 0);
 
@@ -74,9 +79,9 @@ export function computeTwinScenarioProjections(input: TwinCalculationInput): Car
 
     // Sustainability score calculation (0 to 100)
     const reductionFactor = Math.min(1.0, (baselineEmissions - month_12) / (baselineEmissions || 1));
-    const scoreVal = (reductionFactor * SUSTAINABILITY_SCORE_WEIGHTS.reduction)
-                   + (breadthFraction * SUSTAINABILITY_SCORE_WEIGHTS.breadth)
-                   + (consistencyFraction * SUSTAINABILITY_SCORE_WEIGHTS.consistency);
+    const scoreVal = (reductionFactor * CARBON_TWIN_CONFIG.SUSTAINABILITY_SCORE_WEIGHTS.reduction)
+                   + (breadthFraction * CARBON_TWIN_CONFIG.SUSTAINABILITY_SCORE_WEIGHTS.breadth)
+                   + (consistencyFraction * CARBON_TWIN_CONFIG.SUSTAINABILITY_SCORE_WEIGHTS.consistency);
     
     const sustainability_score = Math.min(100, Math.max(0, Math.round(scoreVal * 100)));
 
@@ -101,7 +106,7 @@ export function computeTwinScenarioProjections(input: TwinCalculationInput): Car
     }
 
     // Cost savings estimation: $0.45 per kg CO2e saved (average electricity/transport cost ratio)
-    const estimated_cost_savings = Number((savings * 0.45).toFixed(2));
+    const estimated_cost_savings = Number((savings * CARBON_TWIN_CONFIG.COST_SAVINGS_MULTIPLIER).toFixed(2));
 
     return {
       id: `twin-${scenario}-${Math.random().toString(36).substring(2, 9)}`,

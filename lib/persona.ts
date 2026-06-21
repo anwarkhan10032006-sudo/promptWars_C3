@@ -89,7 +89,22 @@ export const PERSONA_METADATA = {
   }
 };
 
-// Pure classification engine
+/**
+ * Pure engine classifying the user into one of 8 distinct archetypes.
+ * 
+ * Rules Precedence Hierarchy:
+ * 1. Green Starter (Age < 14 days)
+ * 2. Climate Champion (3+ consecutive months of carbon footprint reduction >= 10%)
+ * 3. Frequent Flyer (flights YTD >= 3 and flights share > 40%)
+ * 4. Daily Driver (transportation share > 50% and primary_mode = petrol_car)
+ * 5. Hidden Emitter (overall footprint < 250 and has 1+ category > 50%)
+ * 6. Energy Explorer (electricity is highest category and trending down >= 2 months)
+ * 7. Household Optimizer (household size > 1 and shared resources food/elec improving)
+ * 8. Conscious Commuter (Default fallback; balanced carbon profile)
+ * 
+ * @param input - The detailed metrics including account age, logs, trends, and history.
+ * @returns The classified PersonaKey identifier.
+ */
 export function classifyUserPersona(input: PersonaClassifierInput): PersonaKey {
   const { accountAgeDays, householdSize, logs, rolling30dEmissions, monthlyHistory } = input;
 
@@ -175,7 +190,13 @@ export function classifyUserPersona(input: PersonaClassifierInput): PersonaKey {
   return 'conscious_commuter';
 }
 
-// Evaluate user persona from activity logs (used for testing and profiling)
+/**
+ * Evaluates the user's current persona based on historical activity logs only.
+ * This is used for testing and offline profiling of session logs.
+ * 
+ * @param logs - The array of activity logs.
+ * @returns A Persona object resolved with metadata.
+ */
 export function evaluatePersona(logs: ActivityLog[]): Persona {
   let persona_key: PersonaKey = 'green_starter';
 

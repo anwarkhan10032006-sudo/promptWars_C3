@@ -1,11 +1,5 @@
 import { Category, ActivityLog, Goal, UserProfile } from '../types';
-
-// Scoring Weights
-export const WEIGHTS = {
-  impact: 0.5,
-  feasibility: 0.3,
-  goal: 0.2
-};
+import { RECOMMENDATION_CONFIG } from './config/constants';
 
 export interface CandidateAction {
   ruleId: string;
@@ -279,7 +273,17 @@ export const RECOMMENDATION_RULES: CandidateAction[] = [
   }
 ];
 
-// Pure scoring function
+/**
+ * Calculates a recommendation score based on impact, effort, and goal alignment.
+ * 
+ * Score Formula:
+ *   Score = (impact * WEIGHTS.impact) + ((6 - effort) * WEIGHTS.feasibility) + (goal_alignment_bonus * WEIGHTS.goal) - dismissed_penalty
+ * 
+ * @param action - The candidate action to evaluate.
+ * @param activeGoals - Active carbon goals for the user.
+ * @param dismissedRecently - Whether this action was recently dismissed by the user.
+ * @returns The calculated numerical score, rounded to 2 decimal places.
+ */
 export function scoreRecommendation(
   action: CandidateAction,
   activeGoals: Goal[],
@@ -291,7 +295,6 @@ export function scoreRecommendation(
   // Goal alignment: bonus if action category aligns with active goals
   let goalAlignmentBonus = 0;
   const hasGoalCategory = activeGoals.some(g => {
-    // If the goal target corresponds to reducing emissions overall, or in this specific category
     return g.status === 'on_track' || g.status === 'at_risk';
   });
   if (hasGoalCategory) {
@@ -300,15 +303,23 @@ export function scoreRecommendation(
 
   const dismissedPenalty = dismissedRecently ? 3.0 : 0.0;
 
-  const score = (impact * WEIGHTS.impact) 
-              + ((6 - effort) * WEIGHTS.feasibility) 
-              + (goalAlignmentBonus * WEIGHTS.goal) 
+  const score = (impact * RECOMMENDATION_CONFIG.WEIGHTS.impact) 
+              + ((6 - effort) * RECOMMENDATION_CONFIG.WEIGHTS.feasibility) 
+              + (goalAlignmentBonus * RECOMMENDATION_CONFIG.WEIGHTS.goal) 
               - dismissedPenalty;
 
   return Number(score.toFixed(2));
 }
 
-// Generate, score, and rank recommendations
+/**
+ * Filter, score, and rank all candidate recommendations for a user.
+ * 
+ * @param logs - The user's historical carbon activity logs.
+ * @param goals - The user's active footprint targets.
+ * @param profile - The user's profile settings (for region matching).
+ * @param dismissedIds - List of action IDs that the user has dismissed.
+ * @returns A sorted array of matched recommendations with their scores and resolved rationales.
+ */
 export function getRankedRecommendations(
   logs: ActivityLog[],
   goals: Goal[],
